@@ -1,0 +1,42 @@
+{
+  "manifest_version": 3,
+  "name": "Apex Logger",
+  "version": "1.0",
+  "description": "Create apex debug log for salesforce",
+  "permissions": [
+    "cookies",
+    "tabs",
+    "activeTab"
+  ],
+  "host_permissions": [
+    "https://*.salesforce.com/*",
+    "https://*.salesforce-setup.com/*",
+    "https://*.force.com/*",
+    "https://*.cloudforce.com/*",
+    "https://*.visualforce.com/*",
+    "https://*.sfcrmapps.cn/*",
+    "https://*.sfcrmproducts.cn/*",
+    "https://*.salesforce.mil/*",
+    "https://*.force.mil/*",
+    "https://*.cloudforce.mil/*",
+    "https://*.visualforce.mil/*",
+    "https://*.crmforce.mil/*",
+    "https://*.force.com.mcas.ms/*"
+  ],
+  "action": {
+    "default_popup": "src/popup.html"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": [],
+      "matches": [
+        "https://*/*"
+      ],
+      "extension_ids": []
+    }
+  ],
+  "background": {
+    "service_worker": "src/service.js",
+    "type": "module"
+  }
+}
