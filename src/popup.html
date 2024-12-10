@@ -3,87 +3,105 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Salesforce Debug Log Manager</title>
+  <title>Apex Logger</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 15px;
-      width: 300px;
+      font-family: 'Arial', sans-serif;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #f4f6f9;
+      color: #333;
+      max-width: 400px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      background: #ffffff;
+      border-radius: 10px;
+      overflow: hidden; /* Prevents scrolling */
+      height: auto; /* Ensures content fits dynamically */
     }
-
+  
     header {
       text-align: center;
+      margin-bottom: 20px;
+      padding: 10px;
+      background-color: #0070d2;
+      color: white;
+      border-radius: 10px 10px 0 0;
     }
-
+  
     h1 {
-      font-size: 18px;
+      font-size: 22px;
       margin: 0;
-      color: #333;
+      color: #ffffff;
     }
-
+  
     label {
       display: block;
-      margin-top: 15px;
+      margin: 10px 0 5px;
       font-weight: bold;
+      font-size: 14px;
+      color: #555;
     }
-
+  
     input, select, button {
       width: 100%;
-      padding: 8px;
-      margin-top: 5px;
-      margin-bottom: 10px;
+      padding: 5px;
+      margin: 5px 0 5px;
       border: 1px solid #ccc;
-      border-radius: 4px;
+      border-radius: 6px;
+      font-size: 14px;
+      background-color: #f9f9f9;
     }
-
+  
     button {
       background-color: #0070d2;
       color: white;
       font-weight: bold;
       cursor: pointer;
       border: none;
+      border-radius: 6px;
+      padding: 12px;
+      font-size: 16px;
+      transition: background-color 0.3s ease;
     }
-
+  
     button:hover {
       background-color: #005bb5;
     }
-
-    #userList {
-      max-height: 150px;
-      overflow-y: auto;
-      border: 1px solid #ccc;
-      padding: 5px;
-      border-radius: 4px;
-      margin-top: 10px;
-    }
-
-    .user-item {
-      padding: 5px;
-      border-bottom: 1px solid #eee;
-      cursor: pointer;
-    }
-
-    .user-item:last-child {
-      border-bottom: none;
-    }
-
-    .user-item:hover {
-      background-color: #f0f0f0;
-    }
-
-    .user-item.selected {
-      background-color: #d3d3d3;
-    }
-
+  
     .section {
+      margin-bottom: 20px;
+    }
+  
+    .section h2 {
+      font-size: 16px;
+      margin: 0 0 10px;
+      color: #0070d2;
+      border-bottom: 2px solid #e0e0e0;
+      padding-bottom: 5px;
+    }
+  
+    input, select {
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+  
+    input:focus, select:focus {
+      outline: none;
+      border-color: #0070d2;
+      box-shadow: 0 0 5px rgba(0, 112, 210, 0.5);
+    }
+  
+    footer {
+      text-align: center;
       margin-top: 20px;
+      font-size: 12px;
+      color: #777;
     }
   </style>
+  
 </head>
 <body>
   <header>
-    <h1>Salesforce Debug Log Manager</h1>
+    <h1>Apex Logger</h1>
   </header>
   
   <div class="section">
@@ -106,7 +124,7 @@
     <label for="endTime">End Time:</label>
     <input type="datetime-local" id="endTime">
     
-    <button id="setDebugLog" onclick={setDebugLog}>Set Debug Log</button>
+    <button id="setDebugLog" onclick="setDebugLog()">Set Debug Log</button>
   </div>
 
   <script src="popup.js" type="module"></script>

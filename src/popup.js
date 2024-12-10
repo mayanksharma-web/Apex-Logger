@@ -27,54 +27,87 @@ function populateUserRecords(userRecords) {
 async function setDebugLog() {
   const userId = document.getElementById("user").value;
   const debugLevelId = document.getElementById("debugLevelId").value;
-  console.log('document.getElementById("startTime").value', document.getElementById("startTime").value);
-  const startTime = new Date(document.getElementById("startTime").value).toISOString();
-  const endTime = new Date(document.getElementById("endTime").value).toISOString();
+  const startTime = new Date(document.getElementById("startTime").value);
+  const endTime = new Date(document.getElementById("endTime").value);
 
   if (!userId) {
     alert("Please select a User.");
     return;
   }
 
+  //check existing logs
+  const traceFlagResponse = await con.get('/services/data/v57.0/tooling/query?q=SELECT+Id+FROM+TraceFlag+WHERE+TracedEntityId=\''+userId+'\'+AND+DebugLevelId=\''+debugLevelId+'\'');
+  
+  let traceFlag = null;
+  if(traceFlagResponse?.records?.length > 0){
+    traceFlag = traceFlagResponse.records[0];
+  }
+
   if (!debugLevelId) {
     alert("Please select a debug level.");
     return;
   }
-  
-  const body = {
-        TracedEntityId: userId,
-        DebugLevelId: debugLevelId,
-        StartDate: startTime,
-        ExpirationDate: endTime,
-        LogType: "DEVELOPER_LOG"
-      };
 
-  const response = await con.post('/services/data/v57.0/tooling/sobjects/TraceFlag', body);
-  console.log('response', response);
-  
-  if (response.success) {
-    alert("Debug log enabled!");
-  } else {
-    alert("Failed to enable debug log.");
+  if (startTime >= endTime) {
+    alert("Start time must be earlier than end time.");
+    return;
   }
+
+  if(traceFlag){
+    const body = {
+      StartDate: startTime.toISOString(),
+      ExpirationDate: endTime.toISOString()
+    };
+
+    try {
+      const response = await con.patch('/services/data/v57.0/tooling/sobjects/TraceFlag/'+traceFlag.Id, body);
+      if (response === 'success'){
+        alert("Debug log updated successful!");
+      }
+    } catch (error) {
+      console.error('error',error);
+      alert(error)
+    }
+
+  } else{
+    const body = {
+      TracedEntityId: userId,
+      DebugLevelId: debugLevelId,
+      StartDate: startTime.toISOString(),
+      ExpirationDate: endTime.toISOString(),
+      LogType: "DEVELOPER_LOG"
+    };
+
+    try {
+      const response = await con.post('/services/data/v57.0/tooling/sobjects/TraceFlag', body);
+      if (response.success) {
+        alert("Debug log created!");
+      }
+    } catch (error) {
+      console.error('error',error);
+      alert(error)
+    }
+
+  }
+
+  
+
 }
 
-function populateDefaultDates(){
-  const startTime = document.getElementById("startTime");
-  let now = new Date();
-  let startTimeFormatted = now.toISOString().slice(0, 16);
-  startTime.value = startTimeFormatted;
-  const endTime = document.getElementById("endTime");
-  let endTimeDate = new Date(now.getTime() + 10 * 60 * 1000);
-  let endTimeFormatted = endTimeDate.toISOString().slice(0, 16);
-  endTime.value = endTimeFormatted;
+function populateDefaultDates() {
+  const now = new Date();
+  const localStartTime = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+  document.getElementById('startTime').value = localStartTime;
+  const tenMinutesLater = new Date(now.getTime() + 10 * 60 * 1000);
+  const localEndTime = new Date(tenMinutesLater.getTime() - tenMinutesLater.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+  document.getElementById('endTime').value = localEndTime;
 }
 
 let con = null;
 async function init() {
   con = await new SFConnection().init();
 
-  if(con){
+  if (con) {
     populateDefaultDates();
     const debugLogs = await con.get('/services/data/v57.0/tooling/query?q=SELECT+Id,+DeveloperName+FROM+DebugLevel');
     populateDebugLevels(debugLogs.records);
@@ -82,12 +115,12 @@ async function init() {
     const users = await con.get('/services/data/v57.0/query?q=SELECT+Id,+UserName,+Name+FROM+User+WHERE+IsActive=true');
     populateUserRecords(users.records);
   }
-  
+
 }
 
 document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("setDebugLog").addEventListener("click", () => {
-      setDebugLog();
+    setDebugLog();
   });
 });
 
